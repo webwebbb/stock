@@ -1,0 +1,394 @@
+/* ============================================================
+   GLOBAL TOKENS — profit/loss colors + radius scale
+   ============================================================ */
+:root {
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --green-strong: #15803d;
+
+  --red: #dc2626;
+  --red-bg: #fee2e2;
+  --red-strong: #b91c1c;
+
+  --flat: #6b7280;
+  --flat-bg: #f3f4f6;
+
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.18);
+  --card-lift: -4px;
+
+  --text: #111827;
+  --text-muted: #6b7280;
+}
+
+/* Dark mode tokens */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --green: #4ade80;
+    --green-bg: rgba(74, 222, 128, 0.15);
+    --green-strong: #22c55e;
+
+    --red: #f87171;
+    --red-bg: rgba(248, 113, 113, 0.15);
+    --red-strong: #ef4444;
+
+    --flat: #9ca3af;
+    --flat-bg: rgba(156, 163, 175, 0.12);
+
+    --card-bg: #1b1b1b;
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+    --text: #f5f5f5;
+    --text-muted: #9ca3af;
+  }
+}
+
+/* ============================================================
+   GRID — 4 boxes per row (responsive fallback)
+   ============================================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+
+@media (max-width: 1200px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 860px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px)  { .grid { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   CARD — rounded box + profit/loss color + hover
+   ============================================================ */
+.card {
+  position: relative;
+  overflow: visible;
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);        /* rounded corners */
+  padding: 14px 16px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              border-color 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+
+/* Hover / focus lift */
+.card:hover,
+.card:focus-visible,
+.card:focus-within {
+  transform: translateY(var(--card-lift));
+  box-shadow: var(--card-shadow-hover);
+  z-index: 20;
+}
+
+/* Left accent bar colored by profit/loss */
+.card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 4px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--flat);
+  transition: background-color 0.2s ease, height 0.2s ease;
+}
+.card.up::after   { background: var(--green); }
+.card.down::after { background: var(--red); }
+
+/* Subtle tinted background on hover — green/red/neutral */
+.card.up:hover,
+.card.up:focus-within {
+  border-color: var(--green);
+  background: linear-gradient(0deg, var(--green-bg), var(--card-bg) 60%);
+}
+.card.down:hover,
+.card.down:focus-within {
+  border-color: var(--red);
+  background: linear-gradient(0deg, var(--red-bg), var(--card-bg) 60%);
+}
+.card.flat:hover,
+.card.flat:focus-within {
+  border-color: var(--flat);
+}
+
+/* ============================================================
+   TEXT COLORS — profit (green) / loss (red)
+   ============================================================ */
+.up   { color: var(--green) !important; }
+.down { color: var(--red)   !important; }
+.flat { color: var(--flat)  !important; }
+
+.card .price {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.card .chg {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   BADGE — pill with rounded corners + colored bg
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);     /* pill shape */
+  line-height: 1.2;
+}
+.badge.up   { color: var(--green-strong); background: var(--green-bg); }
+.badge.down { color: var(--red-strong);   background: var(--red-bg);   }
+.badge.flat { color: var(--flat);         background: var(--flat-bg);  }
+
+/* ============================================================
+   DETAIL HOVER BOX — rounded + shadow + green/red accents
+   ============================================================ */
+.detailBox {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translate(-50%, 6px);
+  width: max(230px, 100%);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);        /* rounded corners */
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
+
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease,
+              visibility 0s linear 0.18s;
+  z-index: 50;
+}
+
+.card:hover .detailBox,
+.card:focus-visible .detailBox,
+.card:focus-within .detailBox,
+.card:active .detailBox {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+}
+
+/* Caret arrow */
+.detailBox::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: var(--card-bg);
+  border-left: 1px solid var(--card-border);
+  border-top: 1px solid var(--card-border);
+  border-radius: 2px;
+}
+
+/* Detail box header */
+.detailBox__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 13px;
+  font-weight: 700;
+}
+.detailBox__head.up   { color: var(--green); }
+.detailBox__head.down { color: var(--red);   }
+
+/* Detail rows */
+.detailBox__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.detailBox__row span { color: var(--text-muted); }
+.detailBox__row b    { white-space: nowrap; color: var(--text); }
+.detailBox__row b.up   { color: var(--green) !important; }
+.detailBox__row b.down { color: var(--red)   !important; }
+
+/* Flip hover box upward for the last row so it isn't clipped */
+.grid .card:nth-last-child(-n + 4) .detailBox {
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform: translate(-50%, -6px);
+}
+.grid .card:nth-last-child(-n + 4):hover .detailBox,
+.grid .card:nth-last-child(-n + 4):focus-within .detailBox,
+.grid .card:nth-last-child(-n + 4):active .detailBox {
+  transform: translate(-50%, 0);
+}
+.grid .card:nth-last-child(-n + 4) .detailBox::before {
+  top: auto;
+  bottom: -6px;
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* ============================================================
+   BUTTON + SEARCH — rounded pill + hover
+   ============================================================ */
+.btn {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--text);
+  color: var(--card-bg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.search {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--card-border);
+  padding: 8px 16px;
+  background: var(--card-bg);
+  color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.search:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-bg);
+}
+
+/* ============================================================
+   SKELETON — rounded to match cards
+   ============================================================ */
+.skeleton {
+  min-height: 150px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ============================================================
+   CLICK-FOCUS MODE — click a card to hide others, show only it
+   ============================================================ */
+
+/* Non-selected cards fade/scale out */
+.grid.focused .card.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+}
+
+/* Selected card becomes the sole, centered detail view */
+.grid.focused .card.active {
+  grid-column: 1 / -1;
+  justify-self: center;
+  align-self: start;
+  width: min(520px, 100%);
+  transform: translateY(0) scale(1);
+  box-shadow: var(--card-shadow-hover);
+  z-index: 30;
+  cursor: pointer;
+  animation: focusIn 0.25s ease;
+}
+
+@keyframes focusIn {
+  from { opacity: 0.6; transform: scale(0.96); }
+  to   { opacity: 1;   transform: scale(1); }
+}
+
+/* Detail box shown inline (permanently visible) in focus mode */
+.grid.focused .card.active .detailBox {
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  width: 100%;
+  margin-top: 12px;
+  box-shadow: none;
+  border: 1px solid var(--card-border);
+  background: var(--flat-bg);
+}
+
+/* Hide caret arrow when the box is inline */
+.grid.focused .card.active .detailBox::before {
+  display: none;
+}
+
+/* Larger, clearer detail rows in focus mode */
+.grid.focused .card.active .detailBox__row {
+  font-size: 14px;
+  line-height: 2;
+  padding: 2px 0;
+  border-bottom: 1px dashed var(--card-border);
+}
+.grid.focused .card.active .detailBox__row:last-child {
+  border-bottom: none;
+}
+
+/* Bigger price text in focus mode */
+.grid.focused .card.active .price {
+  font-size: 30px;
+}
+
+/* “Tap again to show all” hint */
+.grid.focused .card.active::before {
+  content: "✕ Tap again to show all";
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--card-bg);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--card-border);
+  white-space: nowrap;
+}
+
+/* Grid becomes a click-to-reset backdrop in focus mode */
+.grid.focused {
+  min-height: 60vh;
+  align-content: start;
+  cursor: zoom-out;
+}
